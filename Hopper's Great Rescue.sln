@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35219.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hopper's Great Rescue", "Hopper's Great Rescue\Hopper's Great Rescue.vcxproj", "{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Debug|x64.ActiveCfg = Debug|x64
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Debug|x64.Build.0 = Debug|x64
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Debug|x86.ActiveCfg = Debug|Win32
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Debug|x86.Build.0 = Debug|Win32
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Release|x64.ActiveCfg = Release|x64
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Release|x64.Build.0 = Release|x64
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Release|x86.ActiveCfg = Release|Win32
+		{FA496DE4-C618-45C6-A1CA-2F92C2F1EAEA}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {24DB9610-EC72-4043-83D8-10A9AC4E6AA2}
+	EndGlobalSection
+EndGlobal
