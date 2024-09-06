@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <cstdlib>
+#include "Players.h"
 
 using namespace std;
 using namespace sf;
@@ -36,108 +37,12 @@ Clock inputDelayClock; // Clock to prevent immediate input after state changes
 enum GameState
 {
     START_SCREEN,
-    GAME_OVER,
     LEVEL_ONE,
     LEVEL_TWO,
+    LEVEL_THREE,
+    LEVEL_FOUR,
     WIN_SCREEN,
     DEATH_SCREEN,
-};
-
-// Class to manage player behavior and attributes
-class Player {
-public:
-    vector<float> angles; // Stores angles for player rotation
-    vector<RectangleShape> bullets; // Stores bullets fired by the player
-    sf::RectangleShape rectangle; // Player's visual representation
-    const float movementSpeed = 175.f; // Player's movement speed
-    Vector2f velocity; // Player's current velocity
-    bool moveUp, moveDown, moveLeft, moveRight; // Movement flags for directional movement
-    FloatRect playerbounds; // Player's bounding box for collision detection
-    Vector2f playerCenter; // Player's center point
-
-    // Constructor to initialize the player's attributes
-    Player(float x, float y, sf::Texture& playerTexture)
-    {
-        rectangle.setSize(sf::Vector2f(x, y));
-        rectangle.setTexture(&playerTexture); // Set the player's texture
-        rectangle.setTextureRect(sf::IntRect(400, 400, 1000, 1000)); // Define the texture rectangle
-        moveUp = moveDown = moveLeft = moveRight = false; // Initialize movement flags
-    }
-
-    // Draw the player to the window
-    void drawTo(sf::RenderWindow& window)
-    {
-        window.draw(rectangle);
-    }
-
-    // Process key events for player movement
-    void processEvetns(sf::Keyboard::Key key, bool checkPressed)
-    {
-        if (checkPressed == true)
-        {
-            // Set the movement flags based on key presses
-            if (key == sf::Keyboard::W)
-                moveUp = true;
-            if (key == sf::Keyboard::A)
-                moveLeft = true;
-            if (key == sf::Keyboard::S)
-                moveDown = true;
-            if (key == sf::Keyboard::D)
-                moveRight = true;
-        }
-        // If no keys are pressed, reset movement flags
-        if (checkPressed == false)
-        {
-            moveUp = false;
-            moveDown = false;
-            moveLeft = false;
-            moveRight = false;
-        }
-    }
-
-    // Update the player's position based on movement flags
-    void update()
-    {
-        velocity.y = 0.f;
-        velocity.x = 0.f;
-
-        // Adjust velocity based on movement flags
-        if (moveUp)
-            velocity.y += -movementSpeed * dt;
-        if (moveDown)
-            velocity.y += movementSpeed * dt;
-        if (moveLeft)
-            velocity.x += -movementSpeed * dt;
-        if (moveRight)
-            velocity.x += movementSpeed * dt;
-
-        // Move the player based on the calculated velocity
-        rectangle.move(velocity);
-        playerbounds = rectangle.getGlobalBounds();
-        playerCenter = Vector2f(rectangle.getPosition().x + 25, rectangle.getPosition().y + 25);
-    }
-
-    // Handle collisions with the screen edges
-    void Collide()
-    {
-        // Prevent the player from moving out of the window bounds
-
-        // Left wall collision
-        if (rectangle.getPosition().x < 0.f)
-            rectangle.setPosition(0.f, rectangle.getPosition().y);
-
-        // Top wall collision
-        if (rectangle.getPosition().y < 0.f)
-            rectangle.setPosition(rectangle.getPosition().x, 0.f);
-
-        // Right wall collision
-        if (rectangle.getPosition().x + rectangle.getGlobalBounds().width > 720)
-            rectangle.setPosition(720 - rectangle.getGlobalBounds().width, rectangle.getPosition().y);
-
-        // Bottom wall collision
-        if (rectangle.getPosition().y + rectangle.getGlobalBounds().height > 720)
-            rectangle.setPosition(rectangle.getPosition().x, 720 - rectangle.getGlobalBounds().height);
-    }
 };
 
 // Class to manage bullets fired by the player
@@ -276,7 +181,7 @@ void setupDeathScreen()
 }
 
 // Function to set up level one
-void setupLevelOne(std::vector<RectangleShape>& enemies, std::vector<RectangleShape>& walls, Player& player,
+void setupLevelOne(std::vector<RectangleShape>& enemies, std::vector<RectangleShape>& walls, Players& players,
     std::vector<Bullet>& bullets, std::vector<enemyBullet>& ebullets, sf::Texture& wallTexture, sf::Texture& enemyTexture)
 {
     // Clear existing enemies, bullets, and walls
@@ -288,21 +193,27 @@ void setupLevelOne(std::vector<RectangleShape>& enemies, std::vector<RectangleSh
     // Initialize enemies
     RectangleShape enemy;
     enemy.setTexture(&enemyTexture);
-    enemy.setTextureRect(sf::IntRect(500, 500, 1000, 1000));
+    enemy.setTextureRect(sf::IntRect(450, 650, 900, 820));
+    //enemy.setOutlineThickness(1);
+    //enemy.setOutlineColor(sf::Color::Red);
     enemy.setSize(Vector2f(50.f, 50.f));
-    enemy.setPosition(310, 310);
+    enemy.setPosition(650, 650);
     enemies.push_back(RectangleShape(enemy));
 
     // Initialize walls
     RectangleShape wall;
     wall.setTexture(&wallTexture);
-    wall.setTextureRect(sf::IntRect(250, 250, 1500, 1500));
+    //wall.setOutlineThickness(1);
+    //wall.setOutlineColor(sf::Color::Red);
+    wall.setTextureRect(sf::IntRect(200, 350, 1500, 1350));
     wall.setSize(Vector2f(50, 50));
 
     // Add walls to the level
     wall.setPosition(100, 100);
     walls.push_back(wall);
     wall.setPosition(310, 100);
+    walls.push_back(wall);
+    wall.setPosition(310, 310);
     walls.push_back(wall);
     wall.setPosition(550, 100);
     walls.push_back(wall);
@@ -318,9 +229,84 @@ void setupLevelOne(std::vector<RectangleShape>& enemies, std::vector<RectangleSh
     walls.push_back(wall);
 
     // Set player starting position
-    player.rectangle.setPosition(50, 50);
+    players.rectangle.setPosition(50, 50);
 }
 
+void setupLevelTwo(std::vector<RectangleShape>& enemies, std::vector<RectangleShape>& walls, Players& players,
+    std::vector<Bullet>& bullets, std::vector<enemyBullet>& ebullets, sf::Texture& wallTexture, sf::Texture& enemyTexture)
+{
+    // Clear existing enemies, bullets, and walls
+    enemies.clear();
+    bullets.clear();
+    ebullets.clear();
+    walls.clear();
+
+    // Initialize enemies
+    RectangleShape enemy;
+    enemy.setTexture(&enemyTexture);
+    enemy.setTextureRect(sf::IntRect(500, 500, 1000, 1000));
+    enemy.setSize(Vector2f(50.f, 50.f));
+    enemy.setPosition(50, 620);
+    enemies.push_back(RectangleShape(enemy));
+
+    // Initialize walls
+    RectangleShape wall;
+    wall.setTexture(&wallTexture);
+    wall.setTextureRect(sf::IntRect(250, 250, 1500, 1500));
+    wall.setSize(Vector2f(50, 50));
+
+    // Add walls to the level
+    wall.setPosition(570, 100);
+    walls.push_back(wall);
+
+    // Set player starting position
+    players.rectangle.setPosition(620, 50);
+}
+
+void setupLevelThree(std::vector<RectangleShape>& enemies, std::vector<RectangleShape>& walls, Players& players,
+    std::vector<Bullet>& bullets, std::vector<enemyBullet>& ebullets, sf::Texture& wallTexture, sf::Texture& enemyTexture)
+{
+    // Clear existing enemies, bullets, and walls
+    enemies.clear();
+    bullets.clear();
+    ebullets.clear();
+    walls.clear();
+
+    // Initialize enemies
+    RectangleShape enemy;
+    enemy.setTexture(&enemyTexture);
+    enemy.setTextureRect(sf::IntRect(500, 500, 1000, 1000));
+    enemy.setSize(Vector2f(50.f, 50.f));
+    enemy.setPosition(50, 620);
+    enemies.push_back(RectangleShape(enemy));
+    enemy.setPosition(620, 620);
+    enemies.push_back(RectangleShape(enemy));
+    enemy.setPosition(50, 50);
+    enemies.push_back(RectangleShape(enemy));
+    enemy.setPosition(620, 50);
+    enemies.push_back(RectangleShape(enemy));
+
+    // Initialize walls
+    RectangleShape wall;
+    wall.setTexture(&wallTexture);
+    wall.setTextureRect(sf::IntRect(250, 250, 1500, 1500));
+    wall.setSize(Vector2f(50, 50));
+
+
+    // Add walls to the level
+    wall.setPosition(Vector2f(260, 260));
+    walls.push_back(wall);
+    wall.setPosition(Vector2f(360, 360));
+    walls.push_back(wall);
+    wall.setPosition(Vector2f(260, 360));
+    walls.push_back(wall);
+    wall.setPosition(Vector2f(360, 260));
+    walls.push_back(wall);
+
+
+    // Set player starting position
+    players.rectangle.setPosition(310, 310);
+}
 // Current game state
 GameState currentState = START_SCREEN;
 
@@ -407,7 +393,7 @@ int main()
     std::vector<RectangleShape> enemies;
 
     // Create a player object
-    Player player(50, 50, playerTexture);
+    Players player(50, 50, playerTexture);
 
     // Variables to manage player and enemy bullets
     std::vector<Bullet> bullets;
@@ -435,9 +421,9 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::KeyPressed)
-                player.processEvetns(event.key.code, true);
+                player.processEvents(event.key.code, true);
             if (event.type == sf::Event::KeyReleased)
-                player.processEvetns(event.key.code, false);
+                player.processEvents(event.key.code, false);
             if (event.type == sf::Event::MouseButtonPressed)
             {
                 // Only allow input if enough time has passed since the last state change
@@ -458,50 +444,62 @@ int main()
             }
         }
 
-        // Handle wall collisions
         for (auto& wall : walls) {
             FloatRect wallBounds = wall.getGlobalBounds();
+
+            // 1. Create the player's next position based on their velocity
             sf::FloatRect nextPosition = player.playerbounds;
             nextPosition.left += player.velocity.x;
             nextPosition.top += player.velocity.y;
 
+            // 2. Check for intersection with the wall
             if (wallBounds.intersects(nextPosition)) {
+                // 3. Calculate the overlap on both axes
                 float horizontalOverlap;
-                if (player.velocity.x > 0)
+                if (player.velocity.x > 0) { // Moving right
                     horizontalOverlap = (player.playerbounds.left + player.playerbounds.width - wallBounds.left);
-                else
+                }
+                else { // Moving left
                     horizontalOverlap = (wallBounds.left + wallBounds.width - player.playerbounds.left);
+                }
 
                 float verticalOverlap;
-                if (player.velocity.y > 0)
+                if (player.velocity.y > 0) { // Moving down
                     verticalOverlap = (player.playerbounds.top + player.playerbounds.height - wallBounds.top);
-                else
+                }
+                else { // Moving up
                     verticalOverlap = (wallBounds.top + wallBounds.height - player.playerbounds.top);
+                }
 
-                bool resolveHorizontal = horizontalOverlap < verticalOverlap;
-
-                if (resolveHorizontal) {
+                // 4. Resolve the smallest overlap (either horizontal or vertical)
+                if (horizontalOverlap < verticalOverlap) {
+                    // Resolve horizontal collision
                     if (player.velocity.x > 0) { // Moving right
                         player.velocity.x = 0.f;
-                        player.rectangle.setPosition(wallBounds.left - player.playerbounds.width, player.playerbounds.top);
+                        player.rectangle.setPosition(wallBounds.left - player.playerbounds.width, player.rectangle.getPosition().y);
                     }
                     else if (player.velocity.x < 0) { // Moving left
                         player.velocity.x = 0.f;
-                        player.rectangle.setPosition(wallBounds.left + wallBounds.width, player.playerbounds.top);
+                        player.rectangle.setPosition(wallBounds.left + wallBounds.width, player.rectangle.getPosition().y);
                     }
                 }
                 else {
+                    // Resolve vertical collision
                     if (player.velocity.y > 0) { // Moving down
                         player.velocity.y = 0.f;
-                        player.rectangle.setPosition(player.playerbounds.left, wallBounds.top - player.playerbounds.height);
+                        player.rectangle.setPosition(player.rectangle.getPosition().x, wallBounds.top - player.playerbounds.height);
                     }
                     else if (player.velocity.y < 0) { // Moving up
                         player.velocity.y = 0.f;
-                        player.rectangle.setPosition(player.playerbounds.left, wallBounds.top + wallBounds.height);
+                        player.rectangle.setPosition(player.rectangle.getPosition().x, wallBounds.top + wallBounds.height);
                     }
                 }
+
+                // Update the player's bounding box after resolving collision
+                player.playerbounds = player.rectangle.getGlobalBounds();
             }
         }
+
 
         // Handle player shooting bullets
         Time shootCooldown = milliseconds(700);
@@ -617,6 +615,7 @@ int main()
         // Draw the game for level one
         else if (currentState == LEVEL_ONE)
         {
+
             window.draw(floorSprite);
 
             // Draw enemies
@@ -646,10 +645,100 @@ int main()
             }
 
             // Update player position
-            player.update();
+            player.update(dt);
 
             // Handle player collision with screen edges
-            player.Collide();
+            player.Collide(window);
+
+            // If all enemies are defeated, go to Level 2
+            if (enemies.empty())
+            {
+                ebullets.clear();
+                setupLevelTwo(enemies, walls, player, bullets, ebullets, wallTexture, enemyTexture);
+                currentState = LEVEL_TWO;
+            }
+        }
+        else if (currentState == LEVEL_TWO)
+        {
+
+            window.draw(floorSprite);
+
+            // Draw enemies
+            for (size_t i = 0; i < enemies.size(); i++)
+            {
+                window.draw(enemies[i]);
+            }
+
+            // Draw the player
+            player.drawTo(window);
+
+            // Draw player bullets
+            for (size_t i = 0; i < bullets.size(); i++)
+            {
+                window.draw(bullets[i].bullet);
+            }
+
+            // Draw enemy bullets
+            for (auto& eBullet : ebullets) {
+                window.draw(eBullet.eBullet);
+            }
+
+            // Draw walls
+            for (auto& i : walls)
+            {
+                window.draw(i);
+            }
+
+            // Update player position
+            player.update(dt);
+
+            // Handle player collision with screen edges
+            player.Collide(window);
+
+            // If all enemies are defeated, go to the third level
+            if (enemies.empty())
+            {
+                ebullets.clear();
+                setupLevelThree(enemies, walls, player, bullets, ebullets, wallTexture, enemyTexture);
+                currentState = LEVEL_THREE;
+            }
+        }
+        else if (currentState == LEVEL_THREE)
+        {
+
+            window.draw(floorSprite);
+
+            // Draw enemies
+            for (size_t i = 0; i < enemies.size(); i++)
+            {
+                window.draw(enemies[i]);
+            }
+
+            // Draw the player
+            player.drawTo(window);
+
+            // Draw player bullets
+            for (size_t i = 0; i < bullets.size(); i++)
+            {
+                window.draw(bullets[i].bullet);
+            }
+
+            // Draw enemy bullets
+            for (auto& eBullet : ebullets) {
+                window.draw(eBullet.eBullet);
+            }
+
+            // Draw walls
+            for (auto& i : walls)
+            {
+                window.draw(i);
+            }
+
+            // Update player position
+            player.update(dt);
+
+            // Handle player collision with screen edges
+            player.Collide(window);
 
             // If all enemies are defeated, go to the win screen
             if (enemies.empty())
